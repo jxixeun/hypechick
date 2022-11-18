@@ -1,6 +1,7 @@
 package hongik.graduation.hypechick.club;
 
 import hongik.graduation.hypechick.member.Member;
+import hongik.graduation.hypechick.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ClubService {
 
     private final ClubRepository clubRepository;
+    private final MemberService memberService;
 
     /**
      * 클럽 생성
@@ -44,6 +46,10 @@ public class ClubService {
      */
     public Long delete(Long id) {
         Club club = clubRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹입니다. id=" + id));
+        for(Member member:club.getMembers()){
+            memberService.deleteClub(member.getId());
+        }
+        club.getMembers().clear();
         clubRepository.delete(club);
         return id;
     }

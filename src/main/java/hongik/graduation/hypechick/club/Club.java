@@ -30,7 +30,7 @@ public class Club extends BaseTimeEntity {
     private int numOfMember; // 가능한 멤버 수
     private Long joinedMemberNum; // 가입한 멤버 수
 
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
 
     private String clubInfo;

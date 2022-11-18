@@ -1,6 +1,8 @@
 package hongik.graduation.hypechick.member;
 
 import hongik.graduation.hypechick.club.Club;
+import hongik.graduation.hypechick.handler.ApiException;
+import hongik.graduation.hypechick.handler.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,32 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
         member.setClub(club);
         return id;
+    }
+
+    /**
+     * 클럽 삭제
+     */
+    public Long deleteClub(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+        member.setClub(null);
+        return id;
+    }
+
+    /**
+     * 클럽 탈퇴
+     */
+    public Long outClub(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+        if (member.getClub() == null){
+            throw new ApiException(ErrorType.MOT_HAVE_GROUP);
+        }
+        Club club = member.getClub();
+        Long clubId = member.getClub().getId();
+        club.getMembers().remove(member);
+        member.setClub(null);
+        return clubId;
     }
 
     /**

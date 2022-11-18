@@ -67,9 +67,8 @@ public class Member {
         return this.id;
     }
 
-    public Long setClub(Club club) {
+    public void setClub(Club club) {
         this.club = club;
-        return club.getId();
     }
 
     public void setGoal(String goal){

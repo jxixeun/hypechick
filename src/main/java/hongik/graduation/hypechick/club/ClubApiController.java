@@ -56,6 +56,18 @@ public class ClubApiController {
     }
 
     /**
+     * 클럽 탈퇴
+     */
+    @GetMapping("/api/clubs/{clubId}/{memberId}")
+    public Long outClub(@PathVariable Long clubId, @PathVariable Long memberId){
+        Long id = memberService.outClub(memberId);
+        if (clubService.findById(id).getMembers().size()==0){
+            clubService.delete(id);
+        }
+        return memberId;
+    }
+
+    /**
      * 클럽 수정
      */
     @PutMapping("/api/clubs/{id}")
