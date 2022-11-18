@@ -17,7 +17,7 @@ public class LoginApiController {
     private final LoginService loginService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/api/login")
+    @PostMapping("/api/v1/login")
     public SuccessResult<LoginResponse> loginApi(@RequestBody LoginRequest request) {
         Member loginMember = loginService.login(request.getEmail(), request.getPassword());
         log.info("login ? {}", loginMember);
@@ -32,7 +32,7 @@ public class LoginApiController {
         return new SuccessResult<>(jwtTokenProvider.createToken(request.getEmail()), loginResponse);
     }
 
-    @PostMapping("/api/socialLogin/{socialLoginType}")
+    @PostMapping("/api/v1/socialLogin/{socialLoginType}")
     public SuccessResult<LoginResponse> socialLogin(@PathVariable String socialLoginType, @RequestBody SocialLoginRequest request) {
         SocialType socialType = SocialType.valueOf(socialLoginType.toUpperCase());
         Member loginMember = loginService.socialLogin(socialType, request.getUid());

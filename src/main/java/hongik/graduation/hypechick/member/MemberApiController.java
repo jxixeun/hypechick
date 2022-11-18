@@ -84,7 +84,7 @@ public class MemberApiController {
      * 회원 등록
      */
 
-    @PostMapping("/api/members")
+    @PostMapping("/api/v1/members")
     public CreateMemberResponse joinMember(@RequestBody @Valid CreateMemberRequest request) {
         Member member = Member.builder()
                 .username(request.getUsername())
@@ -102,7 +102,7 @@ public class MemberApiController {
     /**
      * 소셜 회원 등록
      */
-    @PostMapping("/api/members/{socialLoginType}")
+    @PostMapping("/api/v1/members/{socialLoginType}")
     public CreateMemberResponse joinSocialMember(@PathVariable String socialLoginType, @RequestBody @Valid CreateSocialMemberRequest request){
         SocialType socialType = SocialType.valueOf(socialLoginType.toUpperCase());
         Member member = Member.builder()
