@@ -128,6 +128,23 @@ public class MemberApiController {
         return new UpdateMemberResponse(id, findUser.getUsername(), findUser.getEmail());
     }
 
+    @PostMapping("/api/members/goal/{id}")
+    public void updateUserGoal(@PathVariable Long id, @RequestBody @Valid UpdateMemberGoalRequest updateMemberGoalRequest) {
+        memberService.setGoal(id, updateMemberGoalRequest.getGoal());
+    }
+
+    @Data
+    static class UpdateMemberGoalRequest {
+        @NotEmpty
+        private String goal;
+    }
+
+    @Data
+    static class UpdateMemberGoalResponse {
+        private Long id;
+        private String goal;
+    }
+
     @Data
     static class CreateMemberRequest {
         @NotEmpty
