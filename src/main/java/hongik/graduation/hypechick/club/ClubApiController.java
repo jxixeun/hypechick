@@ -58,7 +58,7 @@ public class ClubApiController {
     /**
      * 클럽 탈퇴
      */
-    @GetMapping("/api/clubs/{clubId}/{memberId}")
+    @GetMapping("/api/clubs/out/{clubId}/{memberId}")
     public Long outClub(@PathVariable Long clubId, @PathVariable Long memberId){
         Long id = memberService.outClub(memberId);
         if (clubService.findById(id).getMembers().size()==0){
