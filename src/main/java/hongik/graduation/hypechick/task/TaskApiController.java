@@ -22,7 +22,7 @@ public class TaskApiController {
     @GetMapping("/api/tasks/{memberId}/{taskId}")
     public TaskDto findById(@PathVariable Long memberId, @PathVariable Long taskId) {
         Tasks task = taskService.findById(taskId);
-        return new TaskDto(task.getId(), task.getContents(), task.getDate());
+        return new TaskDto(task.getId(), task.getContents(), task.getIsChecked(), task.getDate());
     }
 
     //유저가 쓴 전체 투두 조회
@@ -30,7 +30,7 @@ public class TaskApiController {
     public Result findUserTask(@PathVariable Long memberId) {
         List<Tasks> memberTasks = taskService.findMemberTasks(memberId);
         List<TaskDto> collect = memberTasks.stream()
-                .map(t -> new TaskDto((t.getId()), t.getContents(), t.getDate()))
+                .map(t -> new TaskDto((t.getId()), t.getContents(), t.getIsChecked(), t.getDate()))
                 .collect(Collectors.toList());
         return new Result<>(collect);
     }
@@ -78,6 +78,7 @@ public class TaskApiController {
     static class TaskDto {
         private Long taskId;
         private String contents;
+        private Boolean isChecked;
         private LocalDate date;
     }
 
@@ -92,12 +93,14 @@ public class TaskApiController {
     static class CreateTaskResponse {
         private Long taskId;
         private String contents;
+        private Boolean isChecked;
         private LocalDate date;
 
         public CreateTaskResponse(Long taskId, String contents, LocalDate date) {
             this.taskId = taskId;
             this.contents = contents;
             this.date = date;
+            this.isChecked = false;
         }
     }
 
