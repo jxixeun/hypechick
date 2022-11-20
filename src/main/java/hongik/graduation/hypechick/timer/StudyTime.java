@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class StudyTime extends BaseTimeEntity {
+public class StudyTime extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

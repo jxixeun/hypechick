@@ -8,12 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class Tasks extends BaseTimeEntity {
+public class Tasks extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

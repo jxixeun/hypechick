@@ -7,13 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Club extends BaseTimeEntity {
+public class Club extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
