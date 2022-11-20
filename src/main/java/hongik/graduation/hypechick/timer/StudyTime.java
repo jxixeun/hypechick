@@ -20,7 +20,7 @@ public class StudyTime extends BaseTimeEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="MEMBER_ID")
-    private Member member; //회원
+    private Member member;
 
     private Long studyTimeByDate;
 
