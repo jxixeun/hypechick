@@ -3,6 +3,7 @@ package hongik.graduation.hypechick.club;
 import hongik.graduation.hypechick.member.Member;
 import hongik.graduation.hypechick.member.MemberService;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class ClubApiController {
     public Result clubAll() {
         List<Club> clubs = clubService.findClubs();
         List<ClubDto> collect = clubs.stream()
-                .map(c -> new ClubDto(c.getId(),memberService.findById(c.getLeaderId()).getUsername(), c.getClubName(), c.getClubInfo(), c.getNumOfMember(), c.getJoinedMemberNum(), c.getTotalStudyTime(), c.getCreatedDate()))
+                .map(c -> new ClubDto(c.getId(),memberService.findById(c.getLeaderId()).getUsername(), c.getLeaderId(), c.getClubName(), c.getClubInfo(), c.getNumOfMember(), c.getJoinedMemberNum(), c.getTotalStudyTime(), c.getCreatedDate()))
                 .collect(Collectors.toList());
         return new Result<>(collect);
     }
@@ -43,7 +44,7 @@ public class ClubApiController {
                 .map(m -> new MemberDto(m.getId(), m.getUsername(), m.getTotalStudyTime()))
                 .collect(Collectors.toList());
         Result<List<MemberDto>> listResult = new Result<>(collect);
-        return new ClubAllInfo<Result>(club.getId(), memberService.findById(club.getLeaderId()).getUsername(), club.getClubName(), club.getClubInfo(), club.getNumOfMember(), club.getJoinedMemberNum(), club.getTotalStudyTime(), club.getCreatedDate(), listResult);
+        return new ClubAllInfo<Result>(club.getId(), memberService.findById(club.getLeaderId()).getUsername(), club.getLeaderId(),club.getClubName(), club.getClubInfo(), club.getNumOfMember(), club.getJoinedMemberNum(), club.getTotalStudyTime(), club.getCreatedDate(), listResult);
     }
 
     /**
@@ -93,7 +94,16 @@ public class ClubApiController {
         Long id = clubService.save(club);
         memberService.joinClub(leader.getId(), club);
         clubService.join(club.getId(), leader);
-        return new CreateClubResponse(id, leader.getUsername(), club.getClubName(), club.getNumOfMember(), club.getClubInfo(), club.getCreatedDate());
+
+        return CreateClubResponse.builder()
+                .clubId(id)
+                .leaderName(leader.getUsername())
+                .leaderId(leader.getId())
+                .clubName(club.getClubName())
+                .numOfMember(club.getNumOfMember())
+                .clubInfo(club.getClubInfo())
+                .createDate(club.getCreatedDate())
+                .build();
     }
 
     @GetMapping("/api/clubs/{clubId}/{memberId}")
@@ -145,6 +155,7 @@ public class ClubApiController {
         private Long clubId;
         @NotEmpty
         private String leaderName;
+        private Long leaderId;
         @NotEmpty
         private String clubName;
         private int numOfMember;
@@ -152,9 +163,11 @@ public class ClubApiController {
         private String clubInfo;
         private LocalDate createDate;
 
-        public CreateClubResponse(Long clubId, String leaderName, String clubName, int numOfMember, String clubInfo, LocalDate createDate) {
+        @Builder
+        public CreateClubResponse(Long clubId, String leaderName, Long leaderId, String clubName, int numOfMember, String clubInfo, LocalDate createDate) {
             this.clubId = clubId;
             this.leaderName = leaderName;
+            this.leaderId = leaderId;
             this.clubName = clubName;
             this.numOfMember = numOfMember;
             this.clubInfo = clubInfo;
@@ -196,6 +209,7 @@ public class ClubApiController {
     static class ClubDto<T> {
         private Long id;
         private String leaderName;
+        private Long leaderId;
         private String clubName;
         private String clubInfo;
         private int numOfMember;
@@ -209,6 +223,7 @@ public class ClubApiController {
     static class ClubAllInfo<T> {
         private Long id;
         private String leaderName;
+        private Long leaderId;
         private String clubName;
         private String clubInfo;
         private int numOfMember;
