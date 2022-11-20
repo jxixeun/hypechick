@@ -5,5 +5,5 @@ public enum SocialType {
     KAKAO,
     NAVER,
     APPLE,
-    BASIC
+    EMAIL
 }

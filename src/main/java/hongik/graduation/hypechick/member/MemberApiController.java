@@ -1,7 +1,10 @@
 package hongik.graduation.hypechick.member;
 
+import hongik.graduation.hypechick.club.Club;
 import hongik.graduation.hypechick.login.SocialType;
+import hongik.graduation.hypechick.timer.StudyTimeService;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ public class MemberApiController {
      */
 
     private final MemberService memberService;
+    private final StudyTimeService studyTimeService;
 
     @DeleteMapping("/api/members/{id}")
     public Long deleteMember(@PathVariable("id") Long id) {
@@ -45,9 +49,29 @@ public class MemberApiController {
     public MemberInfoResponse getUser(@PathVariable("id") Long id) {
         Member member = memberService.findById(id);
         if (member.getClub() != null){
-            return new MemberInfoResponse(member.getId(), member.getUsername(), member.getEmail(),member.getClub().getId());
+            return MemberInfoResponse.builder()
+                    .id(member.getId())
+                    .username(member.getUsername())
+                    .email(member.getEmail())
+                    .socialType(member.getSocialType())
+                    .totalStudyTime(member.getTotalStudyTime())
+                    .todayStudyTime(studyTimeService.getTodayStudyTime(member.getId()))
+                    .level(member.getLevel())
+                    .clubId(member.getClub().getId())
+                    .goal(member.getGoal())
+                    .build();
         }
-        return new MemberInfoResponse(member.getId(), member.getUsername(), member.getEmail(), null);
+        return MemberInfoResponse.builder()
+                .id(member.getId())
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .socialType(member.getSocialType())
+                .totalStudyTime(member.getTotalStudyTime())
+                .todayStudyTime(studyTimeService.getTodayStudyTime(member.getId()))
+                .level(member.getLevel())
+                .clubId(null)
+                .goal(member.getGoal())
+                .build();
     }
 
     @Data
@@ -66,17 +90,27 @@ public class MemberApiController {
 
     @Data
     static class MemberInfoResponse {
-        //비번 일단 뺌
         private Long id;
         private String username;
         private String email;
+        private SocialType socialType;
+        private Long totalStudyTime;
+        private Long todayStudyTime;
+        private Level level;
         private Long clubId;
+        private String goal;
 
-        public MemberInfoResponse(Long id, String username, String email, Long clubId) {
+        @Builder
+        public MemberInfoResponse(Long id, String username, String email, SocialType socialType, Long totalStudyTime, Long todayStudyTime, Level level, Long clubId, String goal) {
             this.id = id;
             this.username = username;
             this.email = email;
+            this.socialType = socialType;
+            this.totalStudyTime = totalStudyTime;
+            this.todayStudyTime = todayStudyTime;
+            this.level = level;
             this.clubId = clubId;
+            this.goal = goal;
         }
     }
 
@@ -93,7 +127,7 @@ public class MemberApiController {
                 .role(Role.USER)
                 .level(Level.BASIC)
                 .studyTime(0L)
-                .socialType(SocialType.BASIC)
+                .socialType(SocialType.EMAIL)
                 .build();
         Long id = memberService.join(member);
         return new CreateMemberResponse(id, member.getUsername(),member.getEmail());
@@ -129,8 +163,9 @@ public class MemberApiController {
     }
 
     @PostMapping("/api/members/goal/{id}")
-    public void updateUserGoal(@PathVariable Long id, @RequestBody @Valid UpdateMemberGoalRequest updateMemberGoalRequest) {
+    public UpdateMemberGoalResponse updateUserGoal(@PathVariable Long id, @RequestBody @Valid UpdateMemberGoalRequest updateMemberGoalRequest) {
         memberService.setGoal(id, updateMemberGoalRequest.getGoal());
+        return new UpdateMemberGoalResponse(id, memberService.findById(id).getGoal());
     }
 
     @Data
@@ -143,6 +178,11 @@ public class MemberApiController {
     static class UpdateMemberGoalResponse {
         private Long id;
         private String goal;
+
+        public UpdateMemberGoalResponse(Long id, String goal) {
+            this.id = id;
+            this.goal = goal;
+        }
     }
 
     @Data

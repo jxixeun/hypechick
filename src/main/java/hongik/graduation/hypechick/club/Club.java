@@ -23,8 +23,6 @@ public class Club extends BaseTimeEntity {
     @Column(nullable = false)
     private String clubName;
 
-    //    @OneToOne
-//    private Member leader;
     private Long leaderId;
 
     private int numOfMember; // 가능한 멤버 수
