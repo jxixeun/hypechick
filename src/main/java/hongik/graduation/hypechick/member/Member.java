@@ -56,7 +56,7 @@ public class Member {
         this.socialType = socialType;
     }
 
-    public Member update(String username) {
+    public Member updateUsername(String username) {
         this.username = username;
         return this;
     }
