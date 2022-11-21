@@ -54,6 +54,7 @@ public class Club extends BaseTimeEntity implements Serializable {
 
     public Long addMember(Member member){
         members.add(member);
+        this.joinedMemberNum+=1;
         return member.getId();
     }
 
