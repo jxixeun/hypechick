@@ -215,7 +215,7 @@ public class ClubApiController {
         private String clubName;
         private String clubInfo;
         private int numOfMember;
-        private Long joinedMemberNum;
+        private int joinedMemberNum;
         private Long totalStudyTime;
         private LocalDate createDate;
     }
@@ -229,7 +229,7 @@ public class ClubApiController {
         private String clubName;
         private String clubInfo;
         private int numOfMember;
-        private Long joinedMemberNum;
+        private int joinedMemberNum;
         private Long totalStudyTime;
         private LocalDate createDate;
         private T members;

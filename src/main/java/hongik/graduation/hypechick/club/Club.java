@@ -27,7 +27,7 @@ public class Club extends BaseTimeEntity implements Serializable {
     private Long leaderId;
 
     private int numOfMember; // 가능한 멤버 수
-    private Long joinedMemberNum; // 가입한 멤버 수
+    private int joinedMemberNum; // 가입한 멤버 수
 
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
@@ -42,7 +42,7 @@ public class Club extends BaseTimeEntity implements Serializable {
         this.leaderId = leaderId;
         this.numOfMember = numOfMember;
         this.clubInfo = clubInfo;
-        this.joinedMemberNum = 1L;
+        this.joinedMemberNum = 1;
         this.totalStudyTime = 0L;
     }
 
@@ -54,7 +54,7 @@ public class Club extends BaseTimeEntity implements Serializable {
 
     public Long addMember(Member member){
         members.add(member);
-        this.joinedMemberNum+=1;
+        this.joinedMemberNum = members.size();
         return member.getId();
     }
 
