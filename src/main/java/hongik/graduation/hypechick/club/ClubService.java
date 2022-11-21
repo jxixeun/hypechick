@@ -1,5 +1,7 @@
 package hongik.graduation.hypechick.club;
 
+import hongik.graduation.hypechick.handler.ApiException;
+import hongik.graduation.hypechick.handler.ErrorType;
 import hongik.graduation.hypechick.member.Member;
 import hongik.graduation.hypechick.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +28,10 @@ public class ClubService {
     public Long join(Long id, Member member){
         Club club = clubRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹입니다. id=" + id));
-        if (club.getNumOfMember() > club.getJoinedMemberNum()){
-            club.addMember(member);
+        if (club.getNumOfMember() <= club.getJoinedMemberNum()){
+            throw new ApiException(ErrorType.CANT_JOIN_GROUP);
         }
+        club.addMember(member);
         return club.getId();
     }
 
