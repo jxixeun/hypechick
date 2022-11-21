@@ -1,5 +1,6 @@
 package hongik.graduation.hypechick.club;
 
+import hongik.graduation.hypechick.member.Level;
 import hongik.graduation.hypechick.member.Member;
 import hongik.graduation.hypechick.member.MemberService;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ public class ClubApiController {
         Club club = clubService.findById(id);
         List<Member> members = club.getMembers();
         List<MemberDto> collect = members.stream()
-                .map(m -> new MemberDto(m.getId(), m.getUsername(), m.getTotalStudyTime()))
+                .map(m -> new MemberDto(m.getId(), m.getUsername(), m.getTotalStudyTime(),m.getLevel()))
                 .collect(Collectors.toList());
         Result<List<MemberDto>> listResult = new Result<>(collect);
         return new ClubAllInfo<Result>(club.getId(), memberService.findById(club.getLeaderId()).getUsername(), club.getLeaderId(),club.getClubName(), club.getClubInfo(), club.getNumOfMember(), club.getJoinedMemberNum(), club.getTotalStudyTime(), club.getCreatedDate(), listResult);
@@ -138,6 +139,7 @@ public class ClubApiController {
         private Long memberId;
         private String username;
         private Long studyTime;
+        private Level level;
     }
 
     @Data
