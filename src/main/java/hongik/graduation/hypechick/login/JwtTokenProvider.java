@@ -21,8 +21,8 @@ import java.util.Date;
 public class JwtTokenProvider {
     private String secretKey = "hihihihih";
 
-    // 토큰 유효시간 30분
-    private Long tokenValidTime = 30 * 60 * 1000L;
+    // 토큰 유효시간 3일
+    private Long tokenValidTime = 72 * 60 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
