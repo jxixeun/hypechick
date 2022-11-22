@@ -87,7 +87,7 @@ public class LoginApiController {
 
         public SuccessResult(String token, T user_info) {
             this.result = "success";
-            this.expires_in = 30 * 60 * 1000L;
+            this.expires_in = 72 * 60 * 60 * 1000L;
             this.token = token;
             this.message = "login success";
             this.user_info = user_info;
