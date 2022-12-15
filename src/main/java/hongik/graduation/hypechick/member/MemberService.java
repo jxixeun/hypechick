@@ -4,6 +4,7 @@ import hongik.graduation.hypechick.club.Club;
 import hongik.graduation.hypechick.handler.ApiException;
 import hongik.graduation.hypechick.handler.ErrorType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class MemberService {
     private void validateDuplicateMember(Member member) {
         memberRepository.findByEmail(member.getEmail())
                 .ifPresent(m-> {
-                    throw new IllegalStateException("이미 존재하는 이메일입니다.");
+                    throw new ApiException(ErrorType.EMAIL_ALREADY_EXIST);
                 });
     }
 
@@ -40,18 +41,8 @@ public class MemberService {
      */
     public Long update(Long id, String username) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
         member.updateUsername(username);
-        return id;
-    }
-
-    /**
-     * 클럽가입
-     */
-    public Long joinClub(Long id, Club club) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
-        member.setClub(club);
         return id;
     }
 
@@ -60,25 +51,12 @@ public class MemberService {
      */
     public Long deleteClub(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
+        if (member.getClub()==null){
+            throw new ApiException(ErrorType.NOT_HAVE_GROUP);
+        }
         member.setClub(null);
         return id;
-    }
-
-    /**
-     * 클럽 탈퇴
-     */
-    public Long outClub(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
-        if (member.getClub() == null){
-            throw new ApiException(ErrorType.MOT_HAVE_GROUP);
-        }
-        Club club = member.getClub();
-        Long clubId = member.getClub().getId();
-        club.getMembers().remove(member);
-        member.setClub(null);
-        return clubId;
     }
 
     /**
@@ -86,7 +64,7 @@ public class MemberService {
      */
     public void setGoal(Long id, String goal){
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
         member.setGoal(goal);
     }
 
@@ -95,7 +73,7 @@ public class MemberService {
      */
     public Long delete(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
         memberRepository.delete(member);
         return id;
     }
@@ -112,7 +90,7 @@ public class MemberService {
      */
     public Member findById(Long id){
         return memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
     }
 
     public Optional<Member> findByEmail(String email) {
@@ -124,7 +102,7 @@ public class MemberService {
      */
     public Member saveTimer(Long id, Long time) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + id));
+                .orElseThrow(() -> new ApiException(ErrorType.MEMBER_NOT_FOUND));
         member.setTime(time);
         return member;
     }
@@ -133,13 +111,13 @@ public class MemberService {
         Level currentLevel = member.getLevel();
         switch (currentLevel){
             case BASIC:
-                return (member.getLevelUpTime() >= 3600000); // 1시간
+                return (member.getLevelUpTime() >= 7200); // 2시간
             case SILVER:
-                return (member.getLevelUpTime() >= 7200000); // 2시간
+                return (member.getLevelUpTime() >= 14400); // 4시간
             case GOLD:
                 return false;
             default:
-                throw new IllegalArgumentException("Unknown Level : " + currentLevel);
+                throw new ApiException(ErrorType.LEVEL_NOT_EXIST);
         }
     }
 
