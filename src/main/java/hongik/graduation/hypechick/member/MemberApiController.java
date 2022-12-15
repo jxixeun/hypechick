@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +27,7 @@ public class MemberApiController {
 
     private final MemberService memberService;
     private final StudyTimeService studyTimeService;
+    private final PasswordEncoder passwordEncoder;
 
     @DeleteMapping("/api/members/{id}")
     public Long deleteMember(@PathVariable("id") Long id) {
@@ -123,7 +125,7 @@ public class MemberApiController {
         Member member = Member.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .level(Level.BASIC)
                 .studyTime(0L)

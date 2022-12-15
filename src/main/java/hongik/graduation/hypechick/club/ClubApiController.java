@@ -1,5 +1,7 @@
 package hongik.graduation.hypechick.club;
 
+import hongik.graduation.hypechick.handler.ApiException;
+import hongik.graduation.hypechick.handler.ErrorType;
 import hongik.graduation.hypechick.member.Level;
 import hongik.graduation.hypechick.member.Member;
 import hongik.graduation.hypechick.member.MemberService;
@@ -45,7 +47,7 @@ public class ClubApiController {
                 .map(m -> new MemberDto(m.getId(), m.getUsername(), m.getTotalStudyTime(),m.getLevel()))
                 .collect(Collectors.toList());
         Result<List<MemberDto>> listResult = new Result<>(collect);
-        return new ClubAllInfo<Result>(club.getId(), memberService.findById(club.getLeaderId()).getUsername(), club.getLeaderId(),club.getClubName(), club.getClubInfo(), club.getNumOfMember(), club.getJoinedMemberNum(), club.getTotalStudyTime(), club.getCreatedDate(), listResult);
+        return new ClubAllInfo<Result>(club.getId(), memberService.findById(club.getLeaderId()).getUsername(), club.getLeaderId(),club.getClubName(), club.getClubInfo(), club.getNumOfMember(), club.getJoinedMemberNum(), club.getTotalStudyTime(), clubService.getMemberTodayStudyTime(club.getId()),club.getCreatedDate(), listResult);
     }
 
     /**
@@ -62,10 +64,7 @@ public class ClubApiController {
      */
     @GetMapping("/api/clubs/out/{clubId}/{memberId}")
     public Long outClub(@PathVariable Long clubId, @PathVariable Long memberId){
-        Long id = memberService.outClub(memberId);
-        if (clubService.findById(id).getMembers().size()==0){
-            clubService.delete(id);
-        }
+        clubService.outClub(clubId, memberId);
         return memberId;
     }
 
@@ -93,8 +92,7 @@ public class ClubApiController {
                 .clubInfo(request.clubInfo)
                 .build();
         Long id = clubService.save(club);
-        memberService.joinClub(leader.getId(), club);
-        clubService.join(club.getId(), leader);
+        clubService.join(club.getId(), leader.getId());
 
         return CreateClubResponse.builder()
                 .clubId(id)
@@ -109,14 +107,7 @@ public class ClubApiController {
 
     @GetMapping("/api/clubs/{clubId}/{memberId}")
     public JoinClubResponse joinClub(@PathVariable Long clubId, @PathVariable Long memberId){
-        //인원수 검증
-        Club club = clubService.findById(clubId);
-        Member member = memberService.findById(memberId);
-        if (club.getNumOfMember() == club.getJoinedMemberNum()) {
-            throw new IllegalStateException("가입할 수 없습니다.");
-        }
-        memberService.joinClub(memberId, club);
-        clubService.join(club.getId(), member);
+        Club club = clubService.join(clubId, memberId);
         return new JoinClubResponse(club.getId(), club.getClubName(), memberId);
     }
 
@@ -231,6 +222,7 @@ public class ClubApiController {
         private int numOfMember;
         private int joinedMemberNum;
         private Long totalStudyTime;
+        private Long todayStudyTime;
         private LocalDate createDate;
         private T members;
     }

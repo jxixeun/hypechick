@@ -12,8 +12,13 @@ public enum ErrorType {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E0003"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "S0002", "존재하지 않는 회원입니다."),
     SECURITY_01(HttpStatus.UNAUTHORIZED, "S0001", "권한이 없습니다."),
-    CANT_JOIN_GROUP(HttpStatus.BAD_REQUEST,"S0004", "인원이 초과해 가입할 수 없습니다."),
-    MOT_HAVE_GROUP(HttpStatus.BAD_REQUEST, "S0003", "가입한 그룹이 없습니다.");
+    EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"S0003", "이미 가입된 이메일/소셜 계정입니다."),
+    CANT_JOIN_GROUP(HttpStatus.BAD_REQUEST,"G0001", "인원이 초과해 가입할 수 없습니다."),
+    NOT_HAVE_GROUP(HttpStatus.BAD_REQUEST, "G0002", "가입한 그룹이 없습니다."),
+    ALREADY_HAVE_GROUP(HttpStatus.BAD_REQUEST, "G0003", "이미 가입한 그룹이 있습니다."),
+    GROUP_NOT_FOUND(HttpStatus.BAD_REQUEST, "G0004", "존재하지 않는 그룹입니다."),
+    ALREADY_IN_GROUP(HttpStatus.BAD_REQUEST, "G0005", "이미 가입된 그룹입니다."),
+    LEVEL_NOT_EXIST(HttpStatus.BAD_REQUEST, "L0001", "존재하지 않는 레벨입니다.");
 
     private final HttpStatus status;
     private final String code;

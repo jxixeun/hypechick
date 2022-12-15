@@ -38,7 +38,6 @@ public class Club extends BaseTimeEntity implements Serializable {
     @Builder
     public Club(String clubName, Long leaderId, int numOfMember, String clubInfo){
         this.clubName = clubName;
-        //this.leader = leader;
         this.leaderId = leaderId;
         this.numOfMember = numOfMember;
         this.clubInfo = clubInfo;
@@ -53,9 +52,14 @@ public class Club extends BaseTimeEntity implements Serializable {
     }
 
     public Long addMember(Member member){
-        members.add(member);
-        this.joinedMemberNum = members.size();
+        this.members.add(member);
+        this.joinedMemberNum = this.members.size();
         return member.getId();
+    }
+
+    public void outMember(Member member){
+        this.members.remove(member);
+        this.joinedMemberNum = this.members.size();
     }
 
     public Long saveTime(Long time){
